@@ -11,7 +11,7 @@ class PromptedSpreadsheetBuilder:
         self,
         state: State
     ):
-        pass
+       pass
 
     async def interact(
         self,
