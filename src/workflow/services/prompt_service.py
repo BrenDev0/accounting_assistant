@@ -11,7 +11,15 @@ class PromptService:
         self.redis_service = redis_service
 
 
-    async def custom_prompt_template(self, state: State, system_message: str, with_chat_history: bool = False, with_context: bool = False, context_collection: str = None):
+    async def custom_prompt_template(
+        self, 
+        state: State, 
+        system_message: str, 
+        with_chat_history: bool = False, 
+        with_context: bool = False, 
+        context_collection: str = None,
+        context_top_k: int = 4
+    ):
         messages = [
             SystemMessage(content=system_message)
         ]
@@ -20,7 +28,12 @@ class PromptService:
             messages = self.add_chat_history(state, messages)
 
         if with_context and context_collection != None:
-            messages = await self.add_context(input=state["input"], messages=messages, collection_name=context_collection)
+            messages = await self.add_context(
+                input=state["input"], 
+                messages=messages, 
+                collection_name=context_collection,
+                top_k=context_top_k
+            )
 
         messages.append(HumanMessagePromptTemplate.from_template('{input}'))
 
@@ -29,10 +42,17 @@ class PromptService:
         return prompt
 
 
-    async def add_context(self, input: str, messages: List[Dict[str, Any]], collection_name: str) -> List[Any]:
+    async def add_context(
+        self, 
+        input: str, 
+        messages: List[Dict[str, Any]], 
+        collection_name: str,
+        top_k: int = 4
+    ) -> List[Any]:
         context = await self.embedding_service.search_for_context(
             query=input,
-            collection_name=collection_name
+            collection_name=collection_name,
+            top_k=top_k
         )
  
         if context:

@@ -23,7 +23,8 @@ class AccountingAssistant:
             system_message=system_message,
             with_chat_history=True,
             with_context=True,
-            context_collection=f"user_{state['user_id']}_company_{state['company_id']}"
+            context_collection=f"user_{state['user_id']}_company_{state['company_id']}",
+            context_top_k=100
         )
 
         return prompt

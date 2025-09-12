@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 import pytest
-from src.workflow.agents.spreadsheet_builder.prompted_spreadsheet_builder import PromptedSpreadsheetBuilder
+from src.workflow.agents.data_collector.prompted_spreadsheet_builder import PromptedSpreadsheetBuilder
 from src.workflow.services.llm_service import LlmService
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.embedding_service import EmbeddingService
@@ -22,7 +22,7 @@ builder = PromptedSpreadsheetBuilder(
 state = State(
     user_id=os.getenv("TEST_USER_ID"),
     company_id=os.getenv("TEST_COMPANY_ID"),
-    input="make me a spreadsheet showing how many bikes a rented and  the season they were rented in"
+    input="make me a spreadsheet showing total bikes rented where rainfal was greater than 0 please exlude the dates"
 )
 
 

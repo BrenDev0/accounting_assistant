@@ -19,7 +19,10 @@ def configure_container():
 
 
     ## Dependent
-    prompt_service = PromptService(embedding_service=embedding_service)
+    prompt_service = PromptService(
+        embedding_service=embedding_service,
+        redis_service=redis_service
+    )
     Container.register("prompt_service", prompt_service)
 
 

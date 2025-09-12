@@ -24,7 +24,8 @@ class PromptedSpreadsheetBuilder:
             system_message=system_message,
             with_chat_history=True,
             with_context=True,
-            context_collection=f"user_{state['user_id']}_company_{state['company_id']}"
+            context_collection=f"user_{state['user_id']}_company_{state['company_id']}",
+            context_top_k=800
         )
 
         return prompt
@@ -34,8 +35,7 @@ class PromptedSpreadsheetBuilder:
         state: State
     ):
         llm = self.__llm_service.get_llm(
-            temperature=0.2,
-            max_tokens=350
+            temperature=0.2
         )
 
         prompt = await self.__get_prompt_template(state=state)

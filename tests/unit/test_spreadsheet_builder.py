@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from src.workflow.agents.spreadsheet_builder.prompted_spreadsheet_builder import PromptedSpreadsheetBuilder
+from src.workflow.agents.data_collector.prompted_spreadsheet_builder import PromptedSpreadsheetBuilder
 
 @pytest.fixture
 def mock_llm_service():
