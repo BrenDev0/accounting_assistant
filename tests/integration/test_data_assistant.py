@@ -14,15 +14,16 @@ from src.api.core.services.redis_service import RedisService
 @pytest.mark.asyncio
 async def test_data_assistant():
     db = next(get_db_session())
+    input = """show total bikes rented in summer as summer rentals 
+        in winter as winter rentals 
+        in spring as spring rentals 
+        in autumn as fall rentals
+        and the percentage of total bikes rented represented by the seasons as percentage"""
     state = State(
         user_id="",
         company_id=os.getenv("TEST_COMPANY_ID"),
         db=db,
-        input="show total bikes rented in summer as summer rentals "
-        "in winter as winter rentals "
-        "in spring as spring rentals "
-        "in autumn as fall rentals"
-        "and the percentage of total bikes rented represented by the seasons as percentage"
+        input=input
     )
     
     redis_service = RedisService()

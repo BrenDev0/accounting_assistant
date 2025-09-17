@@ -92,7 +92,7 @@ class DataAssistant:
         sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
 
         if not sql.lower().lstrip().startswith("select"):
-            raise ValueError("Only SELECT statements are allowed.")
+            raise ValueError("Invalid query.")
         
         result = state["db"].execute(text(sql))
    
