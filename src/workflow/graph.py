@@ -7,4 +7,4 @@ def create_graph():
     graph = StateGraph(State)
 
 
-    return graph.comile()
+    return graph.compile()
