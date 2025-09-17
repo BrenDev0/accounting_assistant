@@ -1,16 +1,13 @@
-from src.database.database import get_db_session
-from fastapi import Depends
-from sqlalchemy.orm import Session
 from langchain_community.agent_toolkits.sql.base import create_sql_agent
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
+from src.database.database import engine
 from src.workflow.state import State
-from sqlalchemy import select, create_engine, text
+from sqlalchemy import select, text
 from src.database.database_models import TenantTable
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.llm_service import LlmService
 from typing import List
-import os 
 from src.utils.decorators.error_handler import  error_handler
 import re
 
@@ -68,7 +65,7 @@ class DataAssistant:
         )
 
         table_names = self.__get_tenant_tables(state=state)
-        engine = create_engine(os.getenv("DATABASE_URL"))
+       
         db = SQLDatabase(
             engine=engine,
             include_tables=table_names,

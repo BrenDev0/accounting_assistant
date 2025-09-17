@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 load_dotenv()
 import pytest
+import os 
 from src.workflow.state import State
 from src.database.database import get_db_session
 from  src.workflow.services.embedding_service import EmbeddingService
@@ -15,9 +16,13 @@ async def test_data_assistant():
     db = next(get_db_session())
     state = State(
         user_id="",
-        company_id="",
+        company_id=os.getenv("TEST_COMPANY_ID"),
         db=db,
-        input=""
+        input="show total bikes rented in summer as summer rentals "
+        "in winter as winter rentals "
+        "in spring as spring rentals "
+        "in autumn as fall rentals"
+        "and the percentage of total bikes rented represented by the seasons as percentage"
     )
     
     redis_service = RedisService()
