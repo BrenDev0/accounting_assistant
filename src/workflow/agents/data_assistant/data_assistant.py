@@ -61,7 +61,8 @@ class DataAssistant:
         prompt = await self.__get_prompt_template(state=state)
         
         llm = self.__llm_service.get_llm(
-            temperature=0
+            temperature=0,
+            max_tokens=500
         )
 
         table_names = self.__get_tenant_tables(state=state)
