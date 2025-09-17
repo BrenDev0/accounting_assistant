@@ -18,13 +18,14 @@ class Orchestrator:
         system_message = """
         You are an accounting context orchestrator agent. Analyze the user's query and determine which types of information are required.
 
-        Set the following fields to True or False:
+        Set the following fields to true or false:
 
         - general_accounting: true if the query is about general accounting principles, definitions, or practices.
         - document_specific_data: true if the query requires extracting or referencing data from specific company documents or tables.
-        - data_visualization: true if the user is requesting to see, show, or display any data, table, spreadsheet, chart, or graph.
+        - data_visualization: true if the user is requesting to see, show, or display any data, table, spreadsheet, chart, or graph that is based on company documents or tables, or wants to aggregate company data into a new sheet.
+        IMPORTANT: data_visualization can only be true if document_specific_data is also true. If the user asks to see, show, or list general accounting facts or principles (not company data), data_visualization must be false.
 
-        Multiple fields can be True simultaneously.
+        Multiple fields can be true simultaneously.
 
         Respond ONLY in the following JSON format:
         {
@@ -56,6 +57,14 @@ class Orchestrator:
         {
             "general_accounting": false,
             "document_specific_data": true,
+            "data_visualization": false
+        }
+
+        User: Show me the top ten accounting principles and their inception dates.
+        Response:
+        {
+            "general_accounting": true,
+            "document_specific_data": false,
             "data_visualization": false
         }
         """

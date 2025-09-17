@@ -3,6 +3,9 @@ from src.dependencies.container import Container
 from src.workflow.services.embedding_service import EmbeddingService
 from src.workflow.services.llm_service import LlmService
 from src.workflow.services.prompt_service import PromptService
+from src.workflow.agents.accounting_assistant.accounting_assistant import AccountingAssistant
+from src.workflow.agents.data_assistant.data_assistant import DataAssistant
+from src.workflow.agents.orchestrator.orchestrator import Orchestrator
 
 from src.api.core.services.redis_service import RedisService
 
@@ -25,6 +28,23 @@ def configure_container():
     )
     Container.register("prompt_service", prompt_service)
 
+    orchestrator = Orchestrator(
+        prompt_service=prompt_service,
+        llm_service=llm_service
+    )
+    Container.register("orchestrator", orchestrator)
+
+    accounting_assistant = AccountingAssistant(
+        prompt_service=prompt_service,
+        llm_service=llm_service
+    )
+    Container.register("accounting_assistant", accounting_assistant)
+
+    data_assistant = DataAssistant(
+        prompt_service=prompt_service,
+        llm_service=llm_service
+    )
+    Container.register("data_assistant", data_assistant)
 
     ## Module
 
