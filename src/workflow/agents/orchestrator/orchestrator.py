@@ -1,7 +1,7 @@
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.llm_service import LlmService
 from src.workflow.state import State
-from src.workflow.agents.orchestrator.orchestrator_models import OrchesteratorResponse
+from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorResponse
 from src.utils.decorators.error_handler import error_handler
 
 class Orchestrator:
@@ -89,7 +89,7 @@ class Orchestrator:
             max_tokens=100
         )
 
-        structured_llm = llm.with_structured_output(OrchesteratorResponse)
+        structured_llm = llm.with_structured_output(OrchestratorResponse)
 
         chain = prompt | structured_llm
 

@@ -34,7 +34,7 @@ class AccountingAssistant:
         state: State
     ):
         llm = self.__llm_service.get_llm(
-            temperature=0.2,
+            temperature=0.3,
             max_tokens=250
         )
 
