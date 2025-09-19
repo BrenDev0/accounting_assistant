@@ -94,12 +94,11 @@ class DataAssistant:
             sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
 
             if not sql.lower().lstrip().startswith("select"):
-                print(sql, "Sql:::::::::::::::")
                 raise ValueError("Invalid query.")
             
             result = state["db"].execute(text(sql))
     
-            return result.mappings().all()
+            return [dict(row) for row in result.mappings().all()]
 
         else: 
             res = await agent.ainvoke({"input": state["input"]})
