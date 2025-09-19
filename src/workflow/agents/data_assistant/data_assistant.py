@@ -47,7 +47,8 @@ class DataAssistant:
 
         prompt = await self.__prompt_service.custom_prompt_template(
             state=state,
-            system_message=system_message
+            system_message=system_message,
+            with_chat_history=True
         ) 
 
         return prompt
@@ -78,6 +79,7 @@ class DataAssistant:
             llm=llm,
             toolkit=toolkit,
             agent_type="openai-tools",
+            verbose=True,
             max_iterations=10,
             early_stopping_method="force",
             top_k=0
