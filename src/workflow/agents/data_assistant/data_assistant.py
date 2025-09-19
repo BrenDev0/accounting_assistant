@@ -47,8 +47,7 @@ class DataAssistant:
 
         prompt = await self.__prompt_service.custom_prompt_template(
             state=state,
-            system_message=system_message,
-            with_chat_history=True
+            system_message=system_message
         ) 
 
         return prompt
