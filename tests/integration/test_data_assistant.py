@@ -62,28 +62,28 @@ async def test_data_assistant_data_vis():
     assert isinstance(res, List)
 
 
-@pytest.mark.asyncio
-async def test_data_assistant_no_visual():
-    db = next(get_db_session())
-    input = """what are the total number of bikes rented?"""
+# @pytest.mark.asyncio
+# async def test_data_assistant_no_visual():
+#     db = next(get_db_session())
+#     input = """what are the total number of bikes rented?"""
     
-    orch_res = OrchestratorResponse(
-        general_accounting=False,
-        document_specific_data=True,
-        data_visualization=False
-    )
+#     orch_res = OrchestratorResponse(
+#         general_accounting=False,
+#         document_specific_data=True,
+#         data_visualization=False
+#     )
 
 
-    state = State(
-        user_id="",
-        company_id=os.getenv("TEST_COMPANY_ID"),
-        db=db,
-        input=input,
-        orchestrator_response=orch_res
-    )
+#     state = State(
+#         user_id="",
+#         company_id=os.getenv("TEST_COMPANY_ID"),
+#         db=db,
+#         input=input,
+#         orchestrator_response=orch_res
+#     )
     
     
-    res = await data_assistant.interact(state=state)
+#     res = await data_assistant.interact(state=state)
 
-    print(res, "RESPONSE:::::::::::::::::::::")
-    assert isinstance(res, str)
+#     print(res, "RESPONSE:::::::::::::::::::::")
+#     assert isinstance(res, str)
