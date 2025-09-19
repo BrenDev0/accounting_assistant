@@ -19,7 +19,7 @@ def create_graph():
         return {"orchestrator_response": response}
     
 
-    async def router_node(state: State):
+    async def router(state: State):
         orchestrator_response: OrchestratorResponse = state["orchestrator_response"]
 
         if orchestrator_response.document_specific_data:
@@ -44,12 +44,18 @@ def create_graph():
 
 
     graph.add_node("orchestrator", orchestrator_node)
-    graph.add_node("router", router_node)
     graph.add_node("accounting_assistant", accounting_assistant_node)
     graph.add_node("data_assistant", data_assistant_node)
 
     graph.add_edge(START, "orchestrator")
-    graph.add_edge("orchestrator", "router")
+    graph.add_conditional_edges(
+        "orchestrator",
+        router,
+        {
+            "accounting_assistant": "accounting_assistant",
+            "data_assistant": "data_assistant"
+        }
+    )
     graph.add_edge("accounting_assistant", END)
     graph.add_edge("data_assistant", END)
 
