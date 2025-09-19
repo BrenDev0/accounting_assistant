@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from uuid import UUID
 
 class InteractionRequest(BaseModel):
@@ -11,4 +11,4 @@ class InteractionRequest(BaseModel):
     user_id: UUID
 
 class  InteractionResponse(BaseModel):
-    response: str
+    response: Union[str, List[Any]]
