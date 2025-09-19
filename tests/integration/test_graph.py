@@ -48,3 +48,23 @@ async def test_graph_data_assistant_path():
     assert "data_assistant_response" in result
     assert result["data_assistant_response"] is not None
     print("Data Assistant Response:", result["data_assistant_response"])
+
+
+@pytest.mark.asyncio
+async def test_graph_data_assistant_path_no_visualization():
+    db = next(get_db_session())
+    state = {
+        "user_id": os.getenv("TEST_USER_ID"),
+        "company_id": os.getenv("TEST_COMPANY_ID"),
+        "input": "Show total bike rentals when rainfall was greater than 0.",
+        "db": db,
+        "orchestrator_response": None,
+        "accounting_assistant_response": None,
+        "data_assistant_response": None,
+    }
+
+    graph = create_graph()
+    result = await graph.ainvoke(state)
+    assert "data_assistant_response" in result
+    assert result["data_assistant_response"] is not None
+    print("Data Assistant Response:", result["data_assistant_response"])

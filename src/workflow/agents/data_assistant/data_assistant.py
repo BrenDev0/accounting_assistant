@@ -78,23 +78,29 @@ class DataAssistant:
         agent = create_sql_agent(
             llm=llm,
             toolkit=toolkit,
-            verbose=True,
             agent_type="openai-tools",
             max_iterations=10,
             early_stopping_method="force",
             top_k=0
         )
 
-        chain = prompt | agent
+        if state["orchestrator_response"].data_visualization:
 
-        res = await chain.ainvoke({"input": state["input"]})
+            chain = prompt | agent
 
-        sql =  res["output"].strip()
-        sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
+            res = await chain.ainvoke({"input": state["input"]})
 
-        if not sql.lower().lstrip().startswith("select"):
-            raise ValueError("Invalid query.")
-        
-        result = state["db"].execute(text(sql))
-   
-        return result.mappings().all()
+            sql =  res["output"].strip()
+            sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
+
+            if not sql.lower().lstrip().startswith("select"):
+                raise ValueError("Invalid query.")
+            
+            result = state["db"].execute(text(sql))
+    
+            return result.mappings().all()
+
+        else: 
+            res = await agent.ainvoke({"input": state["input"]})
+
+            return res["output"].strip()
