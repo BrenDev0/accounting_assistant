@@ -8,6 +8,7 @@ from src.workflow.agents.data_assistant.data_assistant import DataAssistant
 from src.workflow.agents.orchestrator.orchestrator import Orchestrator
 
 from src.api.core.services.redis_service import RedisService
+from src.api.modules.interactions.interactions_dependencies import configure_interactions_dependencies
 
 def configure_container():
     ## Independent
@@ -48,7 +49,7 @@ def configure_container():
 
     ## Module
 
-    
+    configure_interactions_dependencies()
 
 
 
