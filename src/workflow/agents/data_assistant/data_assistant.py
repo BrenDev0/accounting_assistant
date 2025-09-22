@@ -80,6 +80,7 @@ class DataAssistant:
         )
 
         toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+        print(state, "STATE:::::::::::::")
 
         if state["orchestrator_response"].data_visualization:
 
