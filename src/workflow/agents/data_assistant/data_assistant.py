@@ -80,8 +80,7 @@ class DataAssistant:
         )
 
         toolkit = SQLDatabaseToolkit(db=db, llm=llm)
-        print(state, "STATE:::::::::::::")
-
+    
         if state["orchestrator_response"].data_visualization:
 
             chain = prompt | llm
@@ -100,7 +99,6 @@ class DataAssistant:
             sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
 
             if not sql.lower().lstrip().startswith("select"):
-                print(":::::::SQL::::::::::", sql, ":::::::::::::::::")
                 raise ValueError("Invalid query.")
             
             result = state["db"].execute(text(sql))
