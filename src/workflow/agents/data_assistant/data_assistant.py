@@ -32,8 +32,6 @@ class DataAssistant:
     
     async def __get_prompt_template(
         self,
-        dialect: str,
-        table_info: List[Any],
         state: State
     ): 
         system_message = """
