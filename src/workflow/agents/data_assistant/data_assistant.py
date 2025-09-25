@@ -11,10 +11,12 @@ from src.database.database_models import TenantTable
 
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.llm_service import LlmService
+from src.workflow.agents.data_assistant.data_assistant_models import DataAssistantRespone
 
 from src.utils.decorators.error_handler import  error_handler
 
 from src.api.modules.websocket.websocket_service import WebsocketService
+
 
 
 class DataAssistant:
@@ -46,20 +48,27 @@ class DataAssistant:
         state: State
     ): 
         system_message = """
-        Given an input question, create a read only syntactically correct {dialect} query 
-        to help find the answer. Never limit your query unless the user specifies in his question a
-        specific number of examples they wish to obtain. 
-        
-        Pay attention to use only the column names that you can see in the schema
-        description. Be careful to not query for columns that do not exist. Also,
-        pay attention to which column is in which table.
-        
+        You are a read-only SQL assistant.
+
+        Given an input question, return a syntactically correct {dialect} SELECT query using only the tables listed below.
+
+        If you cannot find a relevant table, or if the question is too vague to answer with the available context, respond in this JSON format:
+        {{
+        "sql": null,
+        "error": "<A clear explanation of the issue, e.g. 'No relevant table found' or 'Question is too vague to answer'>"
+        }}
+
+        If you can answer, respond in this JSON format:
+        {{
+        "sql": "<the SQL SELECT statement>",
+        "error": null
+        }}
+
         Only use the following tables:
         {table_info}
 
-        You will not explain your answer.
-        You will only return syntactically correct {dialect} query.
-        Your query can only be a read only query.
+        Never use tables or columns not listed above.
+        Never explain your answer unless returning an error.
         """
 
         prompt = await self.__prompt_service.custom_prompt_template(
@@ -125,6 +134,8 @@ class DataAssistant:
             max_tokens=500
         )
 
+        structured_llm = llm.with_structured_output(DataAssistantRespone)
+
         table_names = self.__get_tenant_tables(state=state)
        
         db = SQLDatabase(
@@ -135,9 +146,9 @@ class DataAssistant:
 
         websocket: WebSocket = self.__websocket_service.get_connection(state["chat_id"])
     
-        chain = prompt | llm
+        chain = prompt | structured_llm
 
-        res = await chain.ainvoke(
+        res: DataAssistantRespone = await chain.ainvoke(
             {
                 "dialect": db.dialect,
                 "table_info": db.get_table_info(
@@ -147,19 +158,25 @@ class DataAssistant:
             }
         )
 
-        sql =  res.content.strip()
-        sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
+        if res.sql:
+            sql =  res.sql.strip()
+            sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
 
-        if not sql.lower().lstrip().startswith("select"):
-            raise ValueError("Invalid query.")
+            if not sql.lower().lstrip().startswith("select"):
+                raise ValueError("Invalid query.")
         
-        result = state["db"].execute(text(sql))
-        sql_data =  [dict(row) for row in result.mappings().all()]
+            result = state["db"].execute(text(sql))
+            data_response =  [dict(row) for row in result.mappings().all()]
+        elif res.error:
+            data_response = res.error
+
+        else: 
+            data_response = "Error"    
         
         if not state["orchestrator_response"].data_visualization:
             response = await self.__handle_no_visual(
                 state=state,
-                sql_data=sql_data,
+                sql_data=data_response,
                 llm=llm
             )
 
@@ -168,12 +185,12 @@ class DataAssistant:
         else:
             if websocket:
                 try:
-                    await websocket.send_json(sql_data)
+                    await websocket.send_json(data_response)
                 except WebSocketDisconnect:
                     self.__websocket_service.remove_connection(state["chat_id"])
                     websocket = None
                     raise
         
-            return sql_data 
+            return data_response 
 
             
