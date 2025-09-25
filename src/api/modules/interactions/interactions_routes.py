@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Request, Depends
+from fastapi import APIRouter, Body, Request, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from src.api.modules.interactions.interactions_models import InteractionRequest, InteractionResponse
@@ -35,6 +35,7 @@ async def get_state(data: InteractionRequest = Body(...), db: Session = Depends(
 
 @router.post("/internal/interact", status_code=202, response_model=CommonHttpResponse)
 async def secure_interact(
+    background_tasks: BackgroundTasks,
     req: Request,
     _: None = Depends(verify_hmac),
     state: State = Depends(get_state),
@@ -42,6 +43,7 @@ async def secure_interact(
     controller: InteractionsController = Depends(get_interactions_controller)
 ):
     return await controller.interact(
+        background_tasks=background_tasks,
         req=req,
         state=state,
         graph=graph
