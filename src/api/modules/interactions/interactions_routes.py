@@ -1,11 +1,16 @@
 from fastapi import APIRouter, Body, Request, Depends
+from sqlalchemy.orm import Session
+
 from src.api.modules.interactions.interactions_models import InteractionRequest, InteractionResponse
+from src.api.modules.interactions.interactions_controller import InteractionsController
+from src.api.modules.interactions.interactions_dependencies import get_interactions_controller
+
 from src.api.core.middleware.hmac_verification import verify_hmac
+from src.api.core.models.http_respones import CommonHttpResponse
+
 from src.workflow.state import State
 from src.workflow.graph import create_graph
-from src.api.modules.interactions.interactions_controller import InteractionsController
-from src.dependencies.container import Container
-from sqlalchemy.orm import Session
+
 from src.database.database import get_db_session
 
 router = APIRouter(
@@ -17,6 +22,7 @@ async def get_state(data: InteractionRequest = Body(...), db: Session = Depends(
     state = State(
         user_id=data.user_id,
         company_id=data.company_id,
+        chat_id=data.chat_id,
         chat_history=data.chat_history,
         input=data.input,
         db=db,
@@ -27,20 +33,13 @@ async def get_state(data: InteractionRequest = Body(...), db: Session = Depends(
 
     return state
 
-def get_graph():
-    return create_graph()
-
-def get_controller() -> InteractionsController:
-    controller = Container.resolve("interactions_controller")
-    return controller
-
-@router.post("/internal/interact", status_code=200, response_model=InteractionResponse)
+@router.post("/internal/interact", status_code=202, response_model=CommonHttpResponse)
 async def secure_interact(
     req: Request,
     _: None = Depends(verify_hmac),
     state: State = Depends(get_state),
-    graph = Depends(get_graph),
-    controller: InteractionsController = Depends(get_controller)
+    graph = Depends(create_graph),
+    controller: InteractionsController = Depends(get_interactions_controller)
 ):
     return await controller.interact(
         req=req,

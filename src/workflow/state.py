@@ -7,6 +7,7 @@ from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorRes
 class State(TypedDict):
     user_id: UUID
     company_id: UUID
+    chat_id: str
     chat_history: List[Dict[str, Any]]
     input: str
     db: Session

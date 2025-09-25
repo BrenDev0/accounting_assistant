@@ -1,22 +1,34 @@
 from langchain_community.agent_toolkits.sql.base import create_sql_agent
 from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain_community.utilities import SQLDatabase
-from langchain.chains import create_sql_query_chain
+from sqlalchemy import select, text
 from src.database.database import engine
 from src.workflow.state import State
-from sqlalchemy import select, text
+from typing import List, Any
+import re
+from fastapi import WebSocket, WebSocketDisconnect
+
 from src.database.database_models import TenantTable
+
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.llm_service import LlmService
-from typing import List, Any
+
 from src.utils.decorators.error_handler import  error_handler
-import re
+
+from src.api.modules.websocket.websocket_service import WebsocketService
+
 
 class DataAssistant:
     __MODULE = "data_assistant.agent"
-    def __init__(self, prompt_service: PromptService, llm_service: LlmService):
+    def __init__(
+        self, 
+        prompt_service: PromptService, 
+        llm_service: LlmService,
+        websocket_service: WebsocketService
+    ):
         self.__prompt_service = prompt_service
-        self.__llm_service = llm_service
+        self.__llm_service = llm_service,
+        self.__websocket_service = websocket_service
 
     def __get_tenant_tables(
         self,
@@ -80,6 +92,8 @@ class DataAssistant:
         )
 
         toolkit = SQLDatabaseToolkit(db=db, llm=llm)
+
+        websocket: WebSocket = self.__websocket_service.get_connection(state["chat_id"])
     
         if state["orchestrator_response"].data_visualization:
 
@@ -102,8 +116,19 @@ class DataAssistant:
                 raise ValueError("Invalid query.")
             
             result = state["db"].execute(text(sql))
-    
-            return [dict(row) for row in result.mappings().all()]
+            final_response =  [dict(row) for row in result.mappings().all()]
+
+            if websocket:
+                try:
+                    await websocket.send_json(final_response)
+                except WebSocketDisconnect:
+                    self.__websocket_service.remove_connection(state["chat_id"])
+                    websocket = None
+                    raise
+            
+            return final_response
+
+            
 
         else: 
             agent = create_sql_agent(
@@ -116,6 +141,20 @@ class DataAssistant:
                 top_k=100
             )
 
-            res = await agent.ainvoke({"input": state["input"]})
-
-            return res["output"].strip()
+            chunks = []
+            try: 
+                async for chunk in agent.astream({"input": state["input"]}):
+                    if websocket:
+                        try: 
+                            await websocket.send_json(chunk.content.strip())
+                        except WebSocketDisconnect:
+                            self.__websocket_service.remove_connection(state["chat_id"])
+                            websocket = None
+                            raise
+                    chunks.append(chunk.content.strip())
+            except Exception as e:
+                print(f"Error during streaming: {e}")
+                raise
+                
+            finally:
+                return " ".join(chunks)

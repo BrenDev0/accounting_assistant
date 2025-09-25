@@ -1,6 +1,6 @@
 from  fastapi import Request, BackgroundTasks
 from src.workflow.state import State
-from src.api.modules.interactions.interactions_models import InteractionResponse
+from src.api.core.models.http_respones import CommonHttpResponse
 
 class InteractionsController: 
     async def interact(
@@ -8,12 +8,9 @@ class InteractionsController:
         req: Request,
         state: State,
         graph,
-    ) -> InteractionResponse:
-        final_state: State = await graph.ainvoke(state)
-        if final_state["accounting_assistant_response"]:
-            response = final_state["accounting_assistant_response"]
-        else:
-            response = final_state["data_assistant_response"]
-        return InteractionResponse(
-            response=response
+    ) -> CommonHttpResponse:
+        backgound_tasks.add_task(graph.ainvoke, state)
+        
+        return CommonHttpResponse(
+            detail="Request received"
         )
