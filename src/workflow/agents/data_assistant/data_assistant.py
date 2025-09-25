@@ -146,15 +146,15 @@ class DataAssistant:
                 async for chunk in agent.astream({"input": state["input"]}):
                     if websocket:
                         try: 
-                            await websocket.send_json(chunk.content.strip())
+                            await websocket.send_json(chunk["output"])
                         except WebSocketDisconnect:
                             self.__websocket_service.remove_connection(state["chat_id"])
                             websocket = None
                             raise
-                    chunks.append(chunk.content.strip())
+                    chunks.append(chunk["output"])
             except Exception as e:
                 print(f"Error during streaming: {e}")
                 raise
                 
             finally:
-                return " ".join(chunks)
+                return "".join(chunks)
