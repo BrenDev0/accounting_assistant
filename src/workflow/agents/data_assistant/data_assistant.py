@@ -159,7 +159,8 @@ class DataAssistant:
         if not state["orchestrator_response"].data_visualization:
             response = await self.handle_no_visual(
                 state=state,
-                slq_data = sql_data
+                slq_data = sql_data,
+                llm=llm
             )
 
             return response
