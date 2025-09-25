@@ -82,7 +82,7 @@ class DataAssistant:
         the data is :
         {data}
         """
-        prompt = self.__prompt_service.custom_prompt_template(
+        prompt = await self.__prompt_service.custom_prompt_template(
             state=state,
             system_message=system_prompt
         )
