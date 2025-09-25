@@ -147,12 +147,12 @@ class DataAssistant:
                     print(chunk, ":::::::::::chunk:::::::::::::::::")
                     if websocket:
                         try: 
-                            await websocket.send_json(chunk["output"])
+                            pass
                         except WebSocketDisconnect:
                             self.__websocket_service.remove_connection(state["chat_id"])
                             websocket = None
                             raise
-                    chunks.append(chunk["output"])
+                    # chunks.append(chunk["output"])
             except Exception as e:
                 print(f"Error during streaming: {e}")
                 raise
