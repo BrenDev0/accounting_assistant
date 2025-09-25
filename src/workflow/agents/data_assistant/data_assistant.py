@@ -27,7 +27,7 @@ class DataAssistant:
         websocket_service: WebsocketService
     ):
         self.__prompt_service = prompt_service
-        self.__llm_service = llm_service,
+        self.__llm_service = llm_service
         self.__websocket_service = websocket_service
 
     def __get_tenant_tables(
