@@ -1,15 +1,12 @@
 from langchain_core.prompts import ChatPromptTemplate, HumanMessagePromptTemplate, SystemMessagePromptTemplate
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from typing import List, Dict, Any
-from src.api.core.services.redis_service import RedisService
 from src.workflow.services.embedding_service import EmbeddingService
 from src.workflow.state import State
 
 class PromptService:
-    def __init__(self, embedding_service: EmbeddingService, redis_service: RedisService):
+    def __init__(self, embedding_service: EmbeddingService):
         self.embedding_service = embedding_service
-        self.redis_service = redis_service
-
 
     async def custom_prompt_template(
         self, 
