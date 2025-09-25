@@ -1,10 +1,9 @@
-from langchain_community.agent_toolkits.sql.base import create_sql_agent
-from langchain_community.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
+from langchain_openai import ChatOpenAI
 from langchain_community.utilities import SQLDatabase
 from sqlalchemy import select, text
 from src.database.database import engine
 from src.workflow.state import State
-from typing import List, Any
+from typing import List, Any, Dict
 import re
 from fastapi import WebSocket, WebSocketDisconnect
 
@@ -71,6 +70,49 @@ class DataAssistant:
 
         return prompt
     
+    async def handle_no_visual(
+        self,
+        state: State,
+        sql_data: List[Dict[str, Any]],
+        llm: ChatOpenAI
+    ):
+        system_prompt = """
+        Answer the users query using the provided data
+     
+        the data is :
+        {data}
+        """
+        prompt = self.__prompt_service.custom_prompt_template(
+            state=state,
+            system_message=system_prompt
+        )
+
+        chain = prompt | llm
+
+        chunks = []
+        websocket: WebSocket = self.__websocket_service.get_connection(state["chat_id"])
+
+        try:
+            async for chunk in chain.astream({
+                "input": state["input"],
+                "data": sql_data
+            }):
+                if websocket:
+                    try:
+                        await websocket.send_json(chunk.content)
+                    except WebSocketDisconnect:
+                        self.__websocket_service.remove_connection(state["chat_id"])
+                        websocket = None
+                chunks.append(chunk.content)
+        except Exception as e:
+            print(f"Error during streaming: {e}")
+            raise
+        
+        finally:
+            return "".join(chunks)
+
+
+    
     @error_handler(module=__MODULE)
     async def interact(
         self,
@@ -91,71 +133,46 @@ class DataAssistant:
             sample_rows_in_table_info=2
         )
 
-        toolkit = SQLDatabaseToolkit(db=db, llm=llm)
-
         websocket: WebSocket = self.__websocket_service.get_connection(state["chat_id"])
     
-        if state["orchestrator_response"].data_visualization:
+        chain = prompt | llm
 
-            chain = prompt | llm
+        res = await chain.ainvoke(
+            {
+                "dialect": db.dialect,
+                "table_info": db.get_table_info(
+                    table_names=table_names
+                ),
+                "input": state["input"]
+            }
+        )
 
-            res = await chain.ainvoke(
-                {
-                    "dialect": db.dialect,
-                    "table_info": db.get_table_info(
-                        table_names=table_names
-                    ),
-                    "input": state["input"]
-                }
+        sql =  res.content.strip()
+        sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
+
+        if not sql.lower().lstrip().startswith("select"):
+            raise ValueError("Invalid query.")
+        
+        result = state["db"].execute(text(sql))
+        sql_data =  [dict(row) for row in result.mappings().all()]
+        
+        if not state["orchestrator_response"].data_visualization:
+            response = await self.handle_no_visual(
+                state=state,
+                slq_data = sql_data
             )
 
-            sql =  res.content.strip()
-            sql = re.sub(r"^```sql\s*|^```|```$", "", sql, flags=re.MULTILINE).strip()
+            return response
 
-            if not sql.lower().lstrip().startswith("select"):
-                raise ValueError("Invalid query.")
-            
-            result = state["db"].execute(text(sql))
-            final_response =  [dict(row) for row in result.mappings().all()]
-
+        else:
             if websocket:
                 try:
-                    await websocket.send_json(final_response)
+                    await websocket.send_json(sql_data)
                 except WebSocketDisconnect:
                     self.__websocket_service.remove_connection(state["chat_id"])
                     websocket = None
                     raise
-            
-            return final_response
+        
+            return sql_data 
 
             
-
-        else: 
-            agent = create_sql_agent(
-                llm=llm,
-                toolkit=toolkit,
-                agent_type="openai-tools",
-                verbose=True,
-                max_iterations=10,
-                early_stopping_method="force",
-                top_k=100
-            )
-
-            chunks = []
-            try: 
-                async for chunk in agent.astream({"input": state["input"]}):
-                    print(chunk, ":::::::::::chunk:::::::::::::::::")
-                    if websocket:
-                        try: 
-                            pass
-                        except WebSocketDisconnect:
-                            self.__websocket_service.remove_connection(state["chat_id"])
-                            websocket = None
-                            raise
-                    # chunks.append(chunk["output"])
-            except Exception as e:
-                print(f"Error during streaming: {e}")
-                raise
-                
-            finally:
-                return "".join(chunks)
