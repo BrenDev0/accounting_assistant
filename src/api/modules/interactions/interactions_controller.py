@@ -4,12 +4,12 @@ from src.api.core.models.http_respones import CommonHttpResponse
 
 class InteractionsController: 
     async def interact(
-        backgound_tasks: BackgroundTasks,
+        background_tasks: BackgroundTasks,
         req: Request,
         state: State,
         graph,
     ) -> CommonHttpResponse:
-        backgound_tasks.add_task(graph.ainvoke, state)
+        background_tasks.add_task(graph.ainvoke, state)
         
         return CommonHttpResponse(
             detail="Request received"
