@@ -4,7 +4,6 @@ from uuid import UUID
 
 class InteractionRequest(BaseModel):
     input: str
-    agents: Optional[List[UUID]]
     chat_id: UUID
     company_id: UUID
     chat_history: List[Dict[str, Any]]
