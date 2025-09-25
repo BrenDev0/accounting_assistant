@@ -70,7 +70,7 @@ class DataAssistant:
 
         return prompt
     
-    async def handle_no_visual(
+    async def __handle_no_visual(
         self,
         state: State,
         sql_data: List[Dict[str, Any]],
@@ -157,9 +157,9 @@ class DataAssistant:
         sql_data =  [dict(row) for row in result.mappings().all()]
         
         if not state["orchestrator_response"].data_visualization:
-            response = await self.handle_no_visual(
+            response = await self.__handle_no_visual(
                 state=state,
-                slq_data = sql_data,
+                slq_data=sql_data,
                 llm=llm
             )
 
