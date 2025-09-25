@@ -54,11 +54,11 @@ def create_graph(
         if state["data_assistant_response"]:
             response = state["data_assistant_response"]
         else:
-            resposne = state["accounting_assistant_response"]
+            response = state["accounting_assistant_response"]
         req_body = {
             "sender": os.getenv("AGENT_ID"),
             "message_type": "ai",
-            "text": resposne
+            "text": response
         }
         
         async with httpx.AsyncClient() as client:
