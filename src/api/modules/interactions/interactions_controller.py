@@ -3,6 +3,7 @@ from src.workflow.state import State
 from src.api.core.models.http_respones import CommonHttpResponse
 
 class InteractionsController: 
+    @staticmethod
     async def interact(
         background_tasks: BackgroundTasks,
         req: Request,
