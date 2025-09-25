@@ -144,6 +144,7 @@ class DataAssistant:
             chunks = []
             try: 
                 async for chunk in agent.astream({"input": state["input"]}):
+                    print(chunk, ":::::::::::chunk:::::::::::::::::")
                     if websocket:
                         try: 
                             await websocket.send_json(chunk["output"])
