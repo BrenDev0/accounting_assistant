@@ -7,14 +7,14 @@ from src.dependencies.services import get_llm_service, get_prompt_service, get_w
 
 from src.api.modules.websocket.websocket_service import WebsocketService
 
-from src.workflow.agents.data_assistant.data_assistant import DataAssistant
+from src.workflow.agents.fallback.agent import FallBackAgent
 
-def get_data_assistant(
+def get_fallback_agent(
     llm_service: LlmService = Depends(get_llm_service),
     prompt_service: PromptService = Depends(get_prompt_service),
     websocket_service: WebsocketService = Depends(get_websocket_service)
-) -> DataAssistant:
-    return DataAssistant(
+) -> FallBackAgent: 
+    return FallBackAgent(
         llm_service=llm_service,
         prompt_service=prompt_service,
         websocket_service=websocket_service

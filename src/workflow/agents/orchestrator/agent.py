@@ -1,7 +1,7 @@
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.llm_service import LlmService
 from src.workflow.state import State
-from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorResponse
+from src.workflow.agents.orchestrator.models import OrchestratorResponse
 from src.utils.decorators.error_handler import error_handler
 
 class Orchestrator:

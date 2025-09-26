@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
-from src.workflow.agents.accounting_assistant.accounting_assistant import AccountingAssistant
+from workflow.agents.accounting_assistant.agent import AccountingAssistant
 from src.workflow.state import State
 
 @pytest.fixture

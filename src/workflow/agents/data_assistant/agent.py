@@ -11,7 +11,7 @@ from src.database.database_models import TenantTable
 
 from src.workflow.services.prompt_service import PromptService
 from src.workflow.services.llm_service import LlmService
-from src.workflow.agents.data_assistant.data_assistant_models import DataAssistantRespone
+from src.workflow.agents.data_assistant.models import DataAssistantRespone
 
 from src.utils.decorators.error_handler import  error_handler
 

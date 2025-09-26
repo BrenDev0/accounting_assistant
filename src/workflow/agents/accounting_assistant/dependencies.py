@@ -2,20 +2,23 @@ from fastapi import Depends
 
 from src.workflow.services.llm_service import LlmService
 from src.workflow.services.prompt_service import PromptService
+from src.workflow.agents.accounting_assistant.agent import AccountingAssistant
 
 from src.dependencies.services import get_llm_service, get_prompt_service, get_websocket_service
+from src.dependencies.container import Container
 
 from src.api.modules.websocket.websocket_service import WebsocketService
 
-from src.workflow.agents.fallback.fallback_agent import FallBackAgent
 
-def get_fallback_agent(
+
+
+def get_accounting_assistant(
     llm_service: LlmService = Depends(get_llm_service),
     prompt_service: PromptService = Depends(get_prompt_service),
     websocket_service: WebsocketService = Depends(get_websocket_service)
-) -> FallBackAgent: 
-    return FallBackAgent(
+) -> AccountingAssistant:
+    return AccountingAssistant(
         llm_service=llm_service,
         prompt_service=prompt_service,
-        websocket_service=websocket_service
+        websocket_service = websocket_service
     )

@@ -4,15 +4,15 @@ import os
 import httpx
 
 from src.workflow.state import State
-from src.workflow.agents.accounting_assistant.accounting_assistant import AccountingAssistant
-from src.workflow.agents.accounting_assistant.accounting_assistant_dependencies import get_accounting_assistant
-from src.workflow.agents.data_assistant.data_assistant import DataAssistant
-from src.workflow.agents.data_assistant.data_assistant_dependencies import get_data_assistant
-from src.workflow.agents.orchestrator.orchestrator import Orchestrator
-from src.workflow.agents.orchestrator.orchestrator_dependencies import get_orchestrator
-from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorResponse
-from src.workflow.agents.fallback.fallback_agent import FallBackAgent
-from src.workflow.agents.fallback.fallback_dependencies import get_fallback_agent
+from src.workflow.agents.accounting_assistant.agent import AccountingAssistant
+from src.workflow.agents.accounting_assistant.dependencies import get_accounting_assistant
+from src.workflow.agents.data_assistant.agent import DataAssistant
+from src.workflow.agents.data_assistant.dependencies import get_data_assistant
+from src.workflow.agents.orchestrator.agent import Orchestrator
+from src.workflow.agents.orchestrator.dependencies import get_orchestrator
+from src.workflow.agents.orchestrator.models import OrchestratorResponse
+from src.workflow.agents.fallback.agent import FallBackAgent
+from src.workflow.agents.fallback.dependencies import get_fallback_agent
 
 from src.utils.http.hmac import generate_hmac_headers
 

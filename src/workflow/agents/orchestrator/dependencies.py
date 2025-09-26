@@ -5,7 +5,7 @@ from src.workflow.services.prompt_service import PromptService
 
 from src.dependencies.services import get_llm_service, get_prompt_service
 
-from src.workflow.agents.orchestrator.orchestrator import Orchestrator
+from src.workflow.agents.orchestrator.agent import Orchestrator
 
 
 def get_orchestrator(

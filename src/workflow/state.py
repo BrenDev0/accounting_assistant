@@ -2,7 +2,7 @@ from typing_extensions import TypedDict
 from typing import List, Any, Dict
 from uuid import UUID
 from sqlalchemy.orm import Session
-from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorResponse
+from src.workflow.agents.orchestrator.models import OrchestratorResponse
 
 class State(TypedDict):
     user_id: UUID

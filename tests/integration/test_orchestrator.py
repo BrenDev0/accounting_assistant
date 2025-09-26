@@ -7,8 +7,8 @@ from src.database.database import get_db_session
 from  src.workflow.services.embedding_service import EmbeddingService
 from src.workflow.services.llm_service import LlmService
 from src.workflow.services.prompt_service import PromptService
-from src.workflow.agents.orchestrator.orchestrator import Orchestrator
-from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorResponse
+from workflow.agents.orchestrator.agent import Orchestrator
+from workflow.agents.orchestrator.models import OrchestratorResponse
 from src.api.core.services.redis_service import RedisService
 
 redis_service = RedisService()
