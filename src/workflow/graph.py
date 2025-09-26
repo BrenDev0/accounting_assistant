@@ -60,10 +60,19 @@ def create_graph(
     async def handle_response_node(state: State):
         hmac_headers = generate_hmac_headers(os.getenv("HMAC_SECRET"))
         main_server = os.getenv("MAIN_SERVER_ENDPOINT")
+        
         if state["data_assistant_response"]:
             response = state["data_assistant_response"]
-        else:
+
+        elif state["accounting_assistant_response"]:
             response = state["accounting_assistant_response"]
+        
+        elif state["fallback"]:
+            response = state["fallback"]
+        
+        else: 
+            return 
+        
         req_body = {
             "sender": os.getenv("AGENT_ID"),
             "message_type": "ai",
