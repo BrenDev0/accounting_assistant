@@ -25,6 +25,8 @@ class Orchestrator:
         - data_visualization: true if the user is requesting to see, show, or display any data, table, spreadsheet, chart, or graph that is based on company documents or tables, or wants to aggregate company data into a new sheet.
         IMPORTANT: data_visualization can only be true if document_specific_data is also true. If the user asks to see, show, or list general accounting facts or principles (not company data), data_visualization must be false.
 
+        If the user's request is too vague to determine, or is outside the scope of accounting, set all fields to false.
+
         Multiple fields can be true simultaneously.
 
         Respond ONLY in the following JSON format:
@@ -63,6 +65,22 @@ class Orchestrator:
         Response:
         {{
             "general_accounting": true,
+            "document_specific_data": false,
+            "data_visualization": false
+        }}
+
+        User: Can you help me with something?
+        Response:
+        {{
+            "general_accounting": false,
+            "document_specific_data": false,
+            "data_visualization": false
+        }}
+
+        User: Tell me about the weather in Paris.
+        Response:
+        {{
+            "general_accounting": false,
             "document_specific_data": false,
             "data_visualization": false
         }}

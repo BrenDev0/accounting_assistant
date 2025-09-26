@@ -28,7 +28,8 @@ async def get_state(data: InteractionRequest = Body(...), db: Session = Depends(
         db=db,
         orchestrator_response=None,
         accounting_assistant_response=None,
-        data_assistant_response=None
+        data_assistant_response=None,
+        fallback=None
     )
 
     return state

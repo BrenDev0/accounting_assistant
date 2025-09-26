@@ -14,3 +14,4 @@ class State(TypedDict):
     orchestrator_response: OrchestratorResponse
     accounting_assistant_response: str
     data_assistant_response: str
+    fallback: str

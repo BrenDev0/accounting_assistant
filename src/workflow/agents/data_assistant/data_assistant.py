@@ -131,7 +131,7 @@ class DataAssistant:
         
         llm = self.__llm_service.get_llm(
             temperature=0,
-            max_tokens=500
+            max_tokens=1500
         )
 
         structured_llm = llm.with_structured_output(DataAssistantRespone)

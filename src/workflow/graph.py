@@ -11,6 +11,8 @@ from src.workflow.agents.data_assistant.data_assistant_dependencies import get_d
 from src.workflow.agents.orchestrator.orchestrator import Orchestrator
 from src.workflow.agents.orchestrator.orchestrator_dependencies import get_orchestrator
 from src.workflow.agents.orchestrator.orchestrator_models import OrchestratorResponse
+from src.workflow.agents.fallback.fallback_agent import FallBackAgent
+from src.workflow.agents.fallback.fallback_dependencies import get_fallback_agent
 
 from src.utils.http.hmac import generate_hmac_headers
 
@@ -18,7 +20,8 @@ from src.utils.http.hmac import generate_hmac_headers
 def create_graph(
     orchestrator: Orchestrator = Depends(get_orchestrator),
     accounting_assistant: AccountingAssistant = Depends(get_accounting_assistant),
-    data_assistant: DataAssistant = Depends(get_data_assistant)
+    data_assistant: DataAssistant = Depends(get_data_assistant),
+    fallback_agent: FallBackAgent = Depends(get_fallback_agent)
 ):
 
     graph = StateGraph(State)
@@ -34,9 +37,15 @@ def create_graph(
 
         if orchestrator_response.document_specific_data:
             return "data_assistant"
-        else:
+        elif orchestrator_response.general_accounting:
             return "accounting_assistant"
+        else:
+            return "fallback"
         
+
+    async def fallback_node(state: State):
+        response = await fallback_agent.interact(state=state)
+        return {"fallback": response}
 
     async def accounting_assistant_node(state: State):
         response = await accounting_assistant.interact(state=state)
@@ -72,6 +81,7 @@ def create_graph(
 
 
     graph.add_node("orchestrator", orchestrator_node)
+    graph.add_node("fallback", fallback_node)
     graph.add_node("accounting_assistant", accounting_assistant_node)
     graph.add_node("data_assistant", data_assistant_node)
     graph.add_node("handle_response", handle_response_node)
@@ -82,11 +92,13 @@ def create_graph(
         router,
         {
             "accounting_assistant": "accounting_assistant",
-            "data_assistant": "data_assistant"
+            "data_assistant": "data_assistant",
+            "fallback": "fallback"
         }
     )
     graph.add_edge("accounting_assistant", "handle_response")
     graph.add_edge("data_assistant", "handle_response")
+    graph.add_edge("fallback", "handle_response")
     graph.add_edge("handle_response", END)
 
 
