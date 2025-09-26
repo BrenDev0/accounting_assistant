@@ -15,7 +15,7 @@ class FallBackAgent:
         websocket_service: WebsocketService
     ):
         self.__prompt_service = prompt_service
-        self.__llm_service = llm_service,
+        self.__llm_service = llm_service
         self.__websocket_service = websocket_service
 
     @error_handler(module=__MODULE)
