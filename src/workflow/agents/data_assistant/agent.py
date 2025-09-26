@@ -90,6 +90,8 @@ class DataAssistant:
      
         the data is :
         {data}
+
+        - **Format your response using valid Markdown. Use headings, bullet points, numbers, indentations, and bold or italics for clarity.**
         """
         prompt = await self.__prompt_service.custom_prompt_template(
             state=state,

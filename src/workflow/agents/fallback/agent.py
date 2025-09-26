@@ -36,6 +36,7 @@ class FallBackAgent:
         - Data visualizations related to company accounting records
 
         If the user would like help with an accounting-related question, encourage them to ask about those topics.
+        - **Format your response using valid Markdown. Use headings, bullet points, numbers, indentations, and bold or italics for clarity.**
         """
 
         prompt = await self.__prompt_service.custom_prompt_template(

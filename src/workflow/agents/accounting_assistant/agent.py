@@ -30,6 +30,8 @@ class AccountingAssistant:
         Answer all questions accurately and clearly, 
         providing guidance on accounting principles, 
         best practices, and financial data organization.
+
+        - **Format your response using valid Markdown. Use headings, bullet points, numbers, indentations, and bold or italics for clarity.**
         """
 
         prompt = await  self.__prompt_service.custom_prompt_template(
