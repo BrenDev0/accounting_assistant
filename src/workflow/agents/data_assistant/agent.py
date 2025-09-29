@@ -132,8 +132,7 @@ class DataAssistant:
         prompt = await self.__get_prompt_template(state=state)
         
         llm = self.__llm_service.get_llm(
-            temperature=0,
-            max_tokens=1500
+            temperature=0
         )
 
         structured_llm = llm.with_structured_output(DataAssistantRespone)
