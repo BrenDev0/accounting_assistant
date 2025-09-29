@@ -2,6 +2,7 @@ from fastapi import Depends
 from langgraph.graph import StateGraph, END, START
 import os
 import httpx
+from typing import List
 
 from src.workflow.state import State
 from src.workflow.agents.accounting_assistant.agent import AccountingAssistant
@@ -80,7 +81,7 @@ def create_graph(
             "json_data": None
         }
 
-        if state["orchestrator_response"].data_visualization:
+        if isinstance(response, List):
             req_body["json_data"] = response
         else: 
             req_body["text"] = response
