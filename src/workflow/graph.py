@@ -76,8 +76,14 @@ def create_graph(
         req_body = {
             "sender": os.getenv("AGENT_ID"),
             "message_type": "ai",
-            "text": response
+            "text": None,
+            "json_data": None
         }
+
+        if state["orchestrator_response"].data_visualization:
+            req_body["json_data"] = response
+        else: 
+            req_body["text"] = response
         
         async with httpx.AsyncClient() as client:
             await client.post(

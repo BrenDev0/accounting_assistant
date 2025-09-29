@@ -7,25 +7,27 @@ from src.database.database import get_db_session
 from  src.workflow.services.embedding_service import EmbeddingService
 from src.workflow.services.llm_service import LlmService
 from src.workflow.services.prompt_service import PromptService
-from workflow.agents.data_assistant.agent import DataAssistant
-from src.api.core.services.redis_service import RedisService
-from  workflow.agents.orchestrator.models import OrchestratorResponse
+from src.api.modules.websocket.websocket_service import WebsocketService
+from src.workflow.agents.data_assistant.agent import DataAssistant
+
+from  src.workflow.agents.orchestrator.models import OrchestratorResponse
 from typing import List
 
-redis_service = RedisService()
     
 embedding_service = EmbeddingService()
 
 prompt_service = PromptService(
-    embedding_service=embedding_service, 
-    redis_service=redis_service
+    embedding_service=embedding_service
 )
 
 llm_service =  LlmService()
 
+ws_service = WebsocketService()
+
 data_assistant = DataAssistant(
     prompt_service=prompt_service,
-    llm_service=llm_service
+    llm_service=llm_service,
+    websocket_service=ws_service
 )
 
 
@@ -49,6 +51,7 @@ async def test_data_assistant_data_vis():
     state = State(
         user_id="",
         company_id=os.getenv("TEST_COMPANY_ID"),
+        chat_id="83a5e680-3ddf-42dc-93e6-b41f57591512",
         db=db,
         input=input,
         orchestrator_response=orch_res

@@ -118,9 +118,8 @@ class DataAssistant:
         except Exception as e:
             print(f"Error during streaming: {e}")
             raise
-        
-        finally:
-            return "".join(chunks)
+    
+        return "".join(chunks)
 
 
     
