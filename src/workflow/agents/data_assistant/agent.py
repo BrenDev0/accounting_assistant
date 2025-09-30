@@ -52,6 +52,8 @@ class DataAssistant:
 
         Given an input question, return a syntactically correct {dialect} SELECT query using only the tables listed below.
 
+        **IMPORTANT: Always use double quotes around column names and table names that contain special characters like spaces, parentheses, or percentage signs.**
+
         If you cannot find a relevant table, or if the question is too vague to answer with the available context, respond in this JSON format:
         {{
         "sql": null,
