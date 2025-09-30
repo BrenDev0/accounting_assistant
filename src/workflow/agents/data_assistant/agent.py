@@ -49,6 +49,7 @@ class DataAssistant:
         dialect,
         table_info
     ): 
+        print("TABLE INFO:::::::::::", table_info)
         system_message = f"""
         You are a read-only SQL assistant.
 
