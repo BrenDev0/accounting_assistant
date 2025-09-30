@@ -81,7 +81,7 @@ def create_graph(
             "json_data": None
         }
 
-        if isinstance(List, response):
+        if isinstance(response, List):
             req_body["json_data"] = response
         else:
             req_body["text"] = response
