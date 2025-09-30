@@ -30,60 +30,60 @@ class Orchestrator:
         Multiple fields can be true simultaneously.
 
         Respond ONLY in the following JSON format:
-        {{
+        {
             "general_accounting": true or false,
             "document_specific_data": true or false,
             "data_visualization": true or false
-        }}
+        }
         Examples:
 
         User: What is double-entry bookkeeping?
         Response:
-        {{
+        {
             "general_accounting": true,
             "document_specific_data": false,
             "data_visualization": false
-        }}
+        }
 
         User: Show me monthly revenue from our invoices.
         Response:
-        {{
+        {
             "general_accounting": false,
             "document_specific_data": true,
             "data_visualization": true
-        }}
+        }
 
         User: What are our total expenses for the year so far.
         Response:
-        {{
+        {
             "general_accounting": false,
             "document_specific_data": true,
             "data_visualization": false
-        }}
+        }
 
         User: Show me the top ten accounting principles and their inception dates.
         Response:
-        {{
+        {
             "general_accounting": true,
             "document_specific_data": false,
             "data_visualization": false
-        }}
+        }
 
         User: Can you help me with something?
         Response:
-        {{
+        {
             "general_accounting": false,
             "document_specific_data": false,
             "data_visualization": false
-        }}
+        }
 
         User: Tell me about the weather in Paris.
         Response:
-        {{
+        {
             "general_accounting": false,
             "document_specific_data": false,
             "data_visualization": false
-        }}
+        }
         """
 
         prompt = await self.__prompt_service.custom_prompt_template(

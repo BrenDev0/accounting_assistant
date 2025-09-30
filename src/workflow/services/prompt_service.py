@@ -18,7 +18,7 @@ class PromptService:
         context_top_k: int = 4
     ):
         messages = [
-            SystemMessagePromptTemplate.from_template(system_message)
+            SystemMessage(content=system_message)
         ]
 
         if with_chat_history:
