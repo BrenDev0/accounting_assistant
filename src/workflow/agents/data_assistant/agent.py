@@ -45,9 +45,11 @@ class DataAssistant:
     
     async def __get_prompt_template(
         self,
-        state: State
+        state: State,
+        dialect,
+        table_info
     ): 
-        system_message = """
+        system_message = f"""
         You are a read-only SQL assistant.
 
         Given an input question, return a syntactically correct {dialect} SELECT query using only the tables listed below.
@@ -130,7 +132,7 @@ class DataAssistant:
         self,
         state: State
     ):
-        prompt = await self.__get_prompt_template(state=state)
+        
         
         llm = self.__llm_service.get_llm(
             temperature=0
@@ -146,19 +148,19 @@ class DataAssistant:
             sample_rows_in_table_info=2
         )
 
+        prompt = await self.__get_prompt_template(
+            state=state,
+            dialect=db.dialect,
+            table_info=db.get_table_info(
+                table_names=table_names
+            )
+        )
+
         websocket: WebSocket = self.__websocket_service.get_connection(state["chat_id"])
     
         chain = prompt | structured_llm
 
-        res: DataAssistantRespone = await chain.ainvoke(
-            {
-                "dialect": db.dialect,
-                "table_info": db.get_table_info(
-                    table_names=table_names
-                ),
-                "input": state["input"]
-            }
-        )
+        res: DataAssistantRespone = await chain.ainvoke({"input": state["input"]})
 
         if res.sql:
             sql =  res.sql.strip()
