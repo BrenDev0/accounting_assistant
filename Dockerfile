@@ -11,4 +11,4 @@ COPY src/ /app/src/
 
 EXPOSE 8001
 
-CMD [ "/app/.venv/bin/uvicorn", "src.api.server:app", "--host", "0.0.0.0", "--port", "8001" ]
+CMD [ "/app/.venv/bin/fastapi", "run", "src/api/server.py", "--port", "8001", "--forwarded-allow-ips='*'", "--root-path", "/99b5792d-c38a-4e49-9207-a3fa547905ae" ]
