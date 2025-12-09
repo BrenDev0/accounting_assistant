@@ -1,23 +1,18 @@
-# Build stage
 FROM python:3.12-slim AS builder
-
+RUN apt-get update && apt-get install -y git && apt-get clean
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
-
-COPY pyproject.toml .
 COPY uv.lock .
-
+COPY pyproject.toml .
 RUN uv sync --locked
 
-# Runtime stage
 FROM python:3.12-slim
-
 WORKDIR /app
+COPY --from=builder /app/.venv ./.venv
 
-# Copy only the virtual environment and source code
-COPY --from=builder /app/.venv /app/.venv
-COPY src/ /app/src/
 
-EXPOSE 8001
+ENV PATH="/app/.venv/bin:$PATH"
 
-CMD [ "/app/.venv/bin/fastapi", "run", "src/api/server.py", "--port", "8001", "--forwarded-allow-ips='*'", "--root-path", "/99b5792d-c38a-4e49-9207-a3fa547905ae" ]
+COPY src/ ./src/
+
+CMD ["python", "-m", "src.app.main"]
