@@ -20,7 +20,6 @@ def main():
     logging.getLogger("openai._base_client").setLevel(logging.WARNING)
     logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
 
-    initialize_llm_broker()
     logger = logging.getLogger(__name__)
     logger.debug("!!!!! LOGGER LEVEL SET TO DEBUG !!!!!")
 
