@@ -1,4 +1,6 @@
-FROM python:3.12-slim
+# Build stage
+FROM python:3.12-slim AS builder
+
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
 
@@ -7,6 +9,13 @@ COPY uv.lock .
 
 RUN uv sync --locked
 
+# Runtime stage
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Copy only the virtual environment and source code
+COPY --from=builder /app/.venv /app/.venv
 COPY src/ /app/src/
 
 EXPOSE 8001
