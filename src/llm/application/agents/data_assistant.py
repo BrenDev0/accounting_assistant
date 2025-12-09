@@ -8,8 +8,9 @@ from expertise_chats.llm import PromptService, LlmServiceAbstract, LlmMessageEve
 from expertise_chats.broker import Producer
 from expertise_chats.schemas.ws import WsPayload
 
-from src.database.database_models import TenantTable
+from src.database.domain.models import TenantTable
 from src.llm.domain.models.data_assistant import DataAssistantResponse
+from src.database.database import get_db_session
 
 
 
@@ -31,13 +32,13 @@ class DataAssistant:
         self,
         state: State
     ) -> List[str]:
-        db = state["db"]
-        stmt = select(TenantTable.table_name).where(TenantTable.company_id == state["company_id"])
-        result = db.execute(stmt)
+        with get_db_session() as db:
+            stmt = select(TenantTable.table_name).where(TenantTable.company_id == state["company_id"])
+            result = db.execute(stmt)
 
-        tables = [row[0] for row in result.fetchall()]
-        
-        return tables
+            tables = [row[0] for row in result.fetchall()]
+            
+            return tables
     
     async def __get_sql_prompt(
         self,

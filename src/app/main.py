@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 import time
+from src.llm.events.setup import initialize_llm_broker
 
 def main():
     level = os.getenv("LOGGER_LEVEL", logging.INFO)
@@ -23,6 +24,7 @@ def main():
     logger = logging.getLogger(__name__)
     logger.debug("!!!!! LOGGER LEVEL SET TO DEBUG !!!!!")
 
+    initialize_llm_broker()
     # Keep the main thread alive
     try:
         while True:
