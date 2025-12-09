@@ -5,21 +5,17 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "asgi-lifespan>=2.1.0",
-    "fastapi[standard]>=0.116.1",
-    "langchain>=0.3.27",
-    "langchain-community>=0.3.29",
-    "langchain-core>=1.0.3",
-    "langchain-openai>=0.3.33",
+    "dotenv>=0.9.9",
+    "expertise-chats",
+    "langchain-community>=0.4.1",
     "langgraph>=0.6.7",
-    "openai>=1.107.1",
     "pandas>=2.3.2",
     "psycopg2-binary>=2.9.10",
     "pydantic>=2.11.7",
-    "pytest>=8.4.2",
-    "pytest-asyncio>=1.1.0",
-    "qdrant-client>=1.15.1",
-    "redis>=6.4.0",
+    "sqlalchemy>=2.0.44",
     "unstructured>=0.18.14",
-    "uvicorn>=0.35.0",
 ]
+
+
+[tool.uv.sources]
+expertise-chats = { git = "https://github.com/BrenDev0/expertise_chats_shared.git" }
