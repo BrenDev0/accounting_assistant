@@ -13,7 +13,7 @@ class AccountingAssistant:
         self.__prompt_service = prompt_service
         
 
-    async def __get_prompt(
+    def __get_prompt(
         self,
         input: str,
         chat_history: List[MessageModel]
@@ -27,7 +27,7 @@ class AccountingAssistant:
         - **Format your response using valid Markdown. Use headings, bullet points, numbers, indentations, and bold or italics for clarity.**
         """
 
-        prompt = await  self.__prompt_service.build_prompt(
+        prompt = self.__prompt_service.build_prompt(
             system_message=system_message,
             input=input,
             chat_history=chat_history

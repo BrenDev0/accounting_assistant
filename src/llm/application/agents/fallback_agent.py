@@ -11,7 +11,7 @@ class FallBackAgent:
         self.__prompt_service = prompt_service
         self.__stream_llm_output = stream_llm_output
 
-    async def __get_prompt(
+    def __get_prompt(
         self,
         input: str
     ):
@@ -31,7 +31,7 @@ class FallBackAgent:
         - **Format your response using valid Markdown. Use headings, bullet points, numbers, indentations, and bold or italics for clarity.**
         """
 
-        prompt = await self.__prompt_service.build_prompt(
+        prompt = self.__prompt_service.build_prompt(
             system_message=system_message,
             input=input
         )

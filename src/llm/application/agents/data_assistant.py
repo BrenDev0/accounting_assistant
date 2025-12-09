@@ -40,7 +40,7 @@ class DataAssistant:
             
             return tables
     
-    async def __get_sql_prompt(
+    def __get_sql_prompt(
         self,
         input: str,
         chat_history: List[MessageModel],
@@ -74,7 +74,7 @@ class DataAssistant:
         Never explain your answer unless returning an error.
         """
 
-        prompt = await self.__prompt_service.build_prompt(
+        prompt = self.__prompt_service.build_prompt(
             system_message=system_message,
             input=input,
             chat_history=chat_history
@@ -130,7 +130,7 @@ class DataAssistant:
                 sample_rows_in_table_info=2
             )
 
-            prompt = await self.__get_sql_prompt(
+            prompt = self.__get_sql_prompt(
                 state=state,
                 dialect=db.dialect,
                 table_info=db.get_table_info(
